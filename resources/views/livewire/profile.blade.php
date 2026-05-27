@@ -1,17 +1,17 @@
-<div class="p-6 max-w-2xl">
-    <div class="mb-6">
-        <h1 class="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">{{ __('Profile') }}</h1>
-        <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ __('Manage your portfolio profile information') }}</p>
+<div class="p-4 sm:p-6 max-w-2xl">
+    <div class="mb-5 sm:mb-6">
+        <h1 class="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100">{{ __('Profile') }}</h1>
+        <p class="mt-1 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">{{ __('Manage your portfolio profile information') }}</p>
     </div>
 
-    <form wire:submit="save" class="space-y-6">
+    <form wire:submit="save" class="space-y-4 sm:space-y-6">
         <flux:input wire:model="name" label="{{ __('Name') }}" required />
 
         <flux:input wire:model="avatar" label="{{ __('Avatar') }}" type="file" accept="image/*" />
         @if ($existingAvatar)
-            <div class="flex items-center gap-3">
-                <img src="{{ Storage::url($existingAvatar) }}" class="size-16 rounded-full object-cover">
-                <span class="text-sm text-zinc-500">{{ $existingAvatar }}</span>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+                <img src="{{ Storage::url($existingAvatar) }}" class="size-12 sm:size-16 rounded-full object-cover shrink-0">
+                <span class="text-xs sm:text-sm text-zinc-500 break-all">{{ $existingAvatar }}</span>
             </div>
         @endif
 
@@ -27,8 +27,8 @@
         <flux:input wire:model="email" label="{{ __('Email') }}" type="email"
             placeholder="hello@example.com" />
 
-        <div class="flex justify-end">
-            <flux:button variant="primary" type="submit">{{ __('Save') }}</flux:button>
+        <div class="flex flex-col sm:flex-row justify-end">
+            <flux:button variant="primary" type="submit" class="w-full sm:w-auto">{{ __('Save') }}</flux:button>
         </div>
     </form>
 </div>
