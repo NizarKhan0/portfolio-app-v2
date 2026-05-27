@@ -39,7 +39,7 @@
             <div class="flex items-center justify-between px-4 md:px-6 py-4 max-w-5xl mx-auto">
                 <a href="#" class="group flex items-center gap-3">
                     <span class="flex size-9 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-pink-500 text-sm font-bold text-white shadow-lg shadow-indigo-500/20 transition-transform duration-300 group-hover:scale-110 overflow-hidden">
-                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($profile->avatar): ?>
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($profile && $profile->avatar): ?>
                             <img src="<?php echo e(Storage::url($profile->avatar)); ?>" alt="<?php echo e($profile->name); ?>" class="size-full object-cover">
                         <?php else: ?>
                             <?php echo e($profile ? collect(preg_split('/\s+/', $profile->name))->map(fn($w) => strtoupper(substr($w, 0, 1)))->implode('') : 'P'); ?>
