@@ -37,7 +37,9 @@
                         <span class="block size-5 rounded bg-gradient-to-r {{ $project->color }}"></span>
                     </flux:table.cell>
                     <flux:table.cell align="end">
-                        <div class="flex justify-end gap-2">
+                        <div class="flex justify-end gap-1">
+                            <flux:button icon="chevron-up" size="sm" variant="ghost" wire:click="moveUp({{ $project->id }})" :disabled="$loop->first" />
+                            <flux:button icon="chevron-down" size="sm" variant="ghost" wire:click="moveDown({{ $project->id }})" :disabled="$loop->last" />
                             <flux:button icon="pencil" size="sm" wire:click="edit({{ $project->id }})" />
                             <flux:button icon="trash" size="sm" variant="danger" wire:click="confirmDelete({{ $project->id }})" />
                         </div>

@@ -79,6 +79,9 @@ class Projects extends Component
             $data['image'] = $this->image->store('projects', 'public');
         }
 
+        $maxSort = Project::max('sort_order') ?? 0;
+        $data['sort_order'] = $maxSort + 1;
+
         Project::create($data);
 
         Flux::toast(variant: 'success', text: 'Project created successfully.');
@@ -93,8 +96,12 @@ class Projects extends Component
         $this->description = $project->description;
         $this->existingImage = $project->image;
         $this->image = null;
-        $this->tags = is_array($project->tags) ? $project->tags : [];
-        $this->customTags = '';
+
+        $allSkills = Skill::orderBy('sort_order')->pluck('name')->toArray();
+        $tags = is_array($project->tags) ? $project->tags : [];
+        $this->tags = array_intersect($tags, $allSkills);
+        $this->customTags = implode(', ', array_diff($tags, $allSkills));
+
         $this->color = $project->color;
         $this->demo_url = $project->demo_url;
         $this->showModal = true;
@@ -142,10 +149,44 @@ class Projects extends Component
         $this->projectId = null;
     }
 
+    public function moveUp($id)
+    {
+        $items = Project::orderBy('sort_order')->orderBy('id')->get();
+        $keys = $items->keyBy('id');
+        $ids = $items->pluck('id')->values()->toArray();
+        $pos = array_search((int) $id, $ids);
+
+        if ($pos > 0) {
+            $ids[$pos] = $ids[$pos - 1];
+            $ids[$pos - 1] = (int) $id;
+        }
+
+        foreach ($ids as $i => $itemId) {
+            $keys[$itemId]->updateQuietly(['sort_order' => $i + 1]);
+        }
+    }
+
+    public function moveDown($id)
+    {
+        $items = Project::orderBy('sort_order')->orderBy('id')->get();
+        $keys = $items->keyBy('id');
+        $ids = $items->pluck('id')->values()->toArray();
+        $pos = array_search((int) $id, $ids);
+
+        if ($pos < count($ids) - 1) {
+            $ids[$pos] = $ids[$pos + 1];
+            $ids[$pos + 1] = (int) $id;
+        }
+
+        foreach ($ids as $i => $itemId) {
+            $keys[$itemId]->updateQuietly(['sort_order' => $i + 1]);
+        }
+    }
+
     public function render()
     {
         return view('livewire.projects', [
-            'projects' => Project::latest('sort_order')->paginate(10),
+            'projects' => Project::orderBy('sort_order')->orderBy('id')->paginate(10),
             'allSkills' => Skill::orderBy('sort_order')->pluck('name')->toArray(),
         ]);
     }

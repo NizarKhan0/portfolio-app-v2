@@ -58,6 +58,8 @@ class Experiences extends Component
     {
         $this->validate();
 
+        $maxSort = Experience::max('sort_order') ?? 0;
+
         Experience::create([
             'role' => $this->role,
             'company' => $this->company,
@@ -67,6 +69,7 @@ class Experiences extends Component
                 $this->tags,
                 $this->customTags ? array_map('trim', explode(',', $this->customTags)) : []
             ),
+            'sort_order' => $maxSort + 1,
         ]);
 
         Flux::toast(variant: 'success', text: 'Experience created successfully.');
@@ -81,8 +84,12 @@ class Experiences extends Component
         $this->company = $exp->company;
         $this->period = $exp->period;
         $this->description = $exp->description;
-        $this->tags = is_array($exp->tags) ? $exp->tags : [];
-        $this->customTags = '';
+
+        $allSkills = Skill::orderBy('sort_order')->pluck('name')->toArray();
+        $tags = is_array($exp->tags) ? $exp->tags : [];
+        $this->tags = array_intersect($tags, $allSkills);
+        $this->customTags = implode(', ', array_diff($tags, $allSkills));
+
         $this->showModal = true;
         $this->resetValidation();
     }
@@ -121,10 +128,44 @@ class Experiences extends Component
         $this->experienceId = null;
     }
 
+    public function moveUp($id)
+    {
+        $items = Experience::orderBy('sort_order')->orderBy('id')->get();
+        $keys = $items->keyBy('id');
+        $ids = $items->pluck('id')->values()->toArray();
+        $pos = array_search((int) $id, $ids);
+
+        if ($pos > 0) {
+            $ids[$pos] = $ids[$pos - 1];
+            $ids[$pos - 1] = (int) $id;
+        }
+
+        foreach ($ids as $i => $itemId) {
+            $keys[$itemId]->updateQuietly(['sort_order' => $i + 1]);
+        }
+    }
+
+    public function moveDown($id)
+    {
+        $items = Experience::orderBy('sort_order')->orderBy('id')->get();
+        $keys = $items->keyBy('id');
+        $ids = $items->pluck('id')->values()->toArray();
+        $pos = array_search((int) $id, $ids);
+
+        if ($pos < count($ids) - 1) {
+            $ids[$pos] = $ids[$pos + 1];
+            $ids[$pos + 1] = (int) $id;
+        }
+
+        foreach ($ids as $i => $itemId) {
+            $keys[$itemId]->updateQuietly(['sort_order' => $i + 1]);
+        }
+    }
+
     public function render()
     {
         return view('livewire.experiences', [
-            'experiences' => Experience::latest('sort_order')->paginate(10),
+            'experiences' => Experience::orderBy('sort_order')->orderBy('id')->paginate(10),
             'allSkills' => Skill::orderBy('sort_order')->pluck('name')->toArray(),
         ]);
     }

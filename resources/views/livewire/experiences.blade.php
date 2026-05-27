@@ -21,7 +21,9 @@
                     <flux:table.cell>{{ $exp->company }}</flux:table.cell>
                     <flux:table.cell>{{ $exp->period }}</flux:table.cell>
                     <flux:table.cell align="end">
-                        <div class="flex justify-end gap-2">
+                        <div class="flex justify-end gap-1">
+                            <flux:button icon="chevron-up" size="sm" variant="ghost" wire:click="moveUp({{ $exp->id }})" :disabled="$loop->first" />
+                            <flux:button icon="chevron-down" size="sm" variant="ghost" wire:click="moveDown({{ $exp->id }})" :disabled="$loop->last" />
                             <flux:button icon="pencil" size="sm" wire:click="edit({{ $exp->id }})" />
                             <flux:button icon="trash" size="sm" variant="danger" wire:click="confirmDelete({{ $exp->id }})" />
                         </div>

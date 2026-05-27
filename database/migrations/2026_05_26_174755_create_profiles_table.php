@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('avatar')->nullable()->after('name');
+            $table->string('avatar')->nullable();
             $table->string('tagline')->nullable();
             $table->string('github_url')->nullable();
             $table->string('linkedin_url')->nullable();

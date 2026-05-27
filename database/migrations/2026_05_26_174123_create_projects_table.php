@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('image')->nullable()->after('description');
+            $table->string('image')->nullable();
             $table->json('tags')->nullable();
             $table->string('color')->default('from-indigo-500 to-purple-500');
             $table->string('demo_url')->nullable();
