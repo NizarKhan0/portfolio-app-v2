@@ -28,10 +28,16 @@
                 active = window.location.hash || '#home';
                 window.addEventListener('scroll', () => {
                     scrolled = window.scrollY > 50;
+                    let best = null, bestDist = Infinity;
                     document.querySelectorAll('section[id]').forEach(s => {
                         const top = s.getBoundingClientRect().top;
-                        if (top < 200) active = '#' + s.id;
+                        const dist = Math.abs(top);
+                        if (dist < bestDist) { best = '#' + s.id; bestDist = dist; }
                     });
+                    if (best) active = best;
+                });
+                window.addEventListener('hashchange', () => {
+                    active = window.location.hash || '#home';
                 });
             }"
             :class="scrolled ? 'bg-zinc-950/90 backdrop-blur-xl border-zinc-800/50 shadow-lg shadow-black/20' : 'bg-transparent'"
@@ -283,10 +289,12 @@
         @endif
 
         {{-- Contact --}}
-        <section id="contact" class="px-4 md:px-6 py-16 max-w-xl mx-auto text-center">
+        <section id="contact" class="px-4 md:px-6 py-16 max-w-5xl mx-auto text-center">
             <h2 class="text-2xl font-bold mb-4">Get In Touch</h2>
             <p class="text-zinc-400 mb-8">Have a project in mind? Let's talk.</p>
-            <livewire:contact-form />
+            <div class="max-w-xl mx-auto">
+                <livewire:contact-form />
+            </div>
         </section>
 
         {{-- Footer --}}
